@@ -43,33 +43,42 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(html
      emacs-lisp
      helm
      pdf
 
      (shell :variables
-            shell-default-shell 'vterm)
+            shell-default-shell 'eshell)
 
 
      (treemacs :variables treemacs-use-follow-mode nil)
      theming
      themes-megapack
 
+     (osx :variables
+          osx-command-as 'meta
+          osx-right-command-as 'none
+          osx-option-as 'none)
+
      (lsp :variables
           lsp-navigation 'peek
           lsp-file-watch-threshold 3000 ; watch up to 3000 files
           lsp-clients-clangd-executable "/usr/local/Cellar/llvm/10.0.0_3/bin/clangd"
           lsp-clients-clangd-args '("--background-index" "--clang-tidy"))
+
      dap
+
      (auto-completion :variabes
                       auto-completion-enable-snippets-in-popup t
                       auto-completion-use-company-box t
                       auto-completion-return-key-behavior nil
                       auto-completion-tab-key-behavior 'complete)
+
      (git :variables
           magit-repository-directories '(("~/.emacs.d" . 0))
           magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
+
      cmake
      yaml
      (c-c++ :variables
@@ -80,10 +89,12 @@ This function should only modify configuration layer settings."
             c-c++-default-mode-for-headers 'c++-mode)
 
      (org :variables
-          org-capture-templates '(("t" "TODO" entry (file+headline "~/dev/org/todo.org" "Tasks") "* TODO  %?\n  %i\n")
-                                  ("f" "TODO in file" entry (file+headline "~/dev/org/todo.org" "Tasks") "* TODO  %?\n  %i\n  %a"))
+          org-capture-templates '(("t" "TODO" entry (file+headline "~/Dropbox/org/inbox.org" "Tasks") "* TODO  %?\n  %i\n")
+                                  ("f" "TODO in file" entry (file+headline "~/Dropbox/org/inbox.org" "Tasks") "* TODO  %?\n  %i\n  %a"))
                                         ;org-bullets-bullet-list '("◉" "◎" "⚫" "○" "►" "◇")
-          org-agenda-files '("~/dev/org/todo.org" "~/dev/org/notebook.org")
+          org-agenda-files '("~/Dropbox/org/_today.org"
+                             "~/Dropbox/org/inbox.org"
+                             "~/dev/org/notebook.org")
           org-todo-keywords '(
                               (sequence "STARTED(s)" "TODO(t)" "WAITING(w@/!)" "REVIEW(r)" "BLOCKED(b)" "SOMEDAY(.)" "|" "DONE(x!)" "CANCELLED(c)")
                               (sequence "LEARN" "TRY" "|" "COMPLETE(x)")
@@ -104,18 +115,21 @@ This function should only modify configuration layer settings."
      spacemacs-org
      rust
      clojure
-)
-     
+     )
 
-     ;; List of additional packages that will be installed without being
-     ;; wrapped in a layer. If you need some configuration for these
-     ;; packages, then consider creating a layer. You can also put the
-     ;; configuration in `dotspacemacs/user-config'.
-     ;; To use a local version of a package, use the `:location' property:
-     ;; '(your-package :location "~/path/to/your-package/")
-     ;; Also include the dependencies as they will not be resolved automatically.
-     dotspacemacs-additional-packages '(
+
+   ;; List of additional packages that will be installed without being
+   ;; wrapped in a layer. If you need some configuration for these
+   ;; packages, then consider creating a layer. You can also put the
+   ;; configuration in `dotspacemacs/user-config'.
+   ;; To use a local version of a package, use the `:location' property:
+   ;; '(your-package :location "~/path/to/your-package/")
+   ;; Also include the dependencies as they will not be resolved automatically.
+   dotspacemacs-additional-packages '(
+                                      apache-mode ;; for htaccess syntax
+                                      dockerfile-mode
                                       prism
+                                      docker
                                       git-gutter+
                                       bazel-mode
                                       rainbow-mode
@@ -124,6 +138,7 @@ This function should only modify configuration layer settings."
                                       (evil-adjust :location (recipe :fetcher github :repo "troyp/evil-adjust"))
                                       (helm-icons :location (recipe :fetcher github :repo "yyoncho/helm-icons"))
                                       (tron-legacy-theme :location (recipe :fetcher github :repo "ianpan870102/tron-legacy-emacs-theme"))
+                                      (piper :location (recipe :fetcher gitlab :repo "howardabrams/emacs-piper"))
                                       )
 
    ;; A list of packages that cannot be updated.
@@ -135,7 +150,6 @@ This function should only modify configuration layer settings."
                                     evil-exchange
                                     evil-goggles
                                     emmet-mode
-
                                     )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
@@ -483,7 +497,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; If non-nil, advise quit functions to keep server open when quitting.
    ;; (default nil)
-   dotspacemacs-persistent-server nil
+   dotspacemacs-persistent-server t
 
    ;; List of search tool executable names. Spacemacs uses the first installed
    ;; tool of the list. Supported tools are `rg', `ag', `pt', `ack' and `grep'.
@@ -581,6 +595,15 @@ before packages are loaded."
   (require 'evil-adjust)
   (evil-adjust)
 
+  (use-package piper
+    :config
+    (spacemacs/declare-prefix "o |" "piper")
+    (spacemacs/set-leader-keys
+      "|"     '("piper-ui"        . piper-user-interface)
+      "o | |" '("piper-locally"   . piper)
+      "o | d" '("other-directory" . piper-other)
+      "o | r" '("piper-remotely"  . piper-remote)))
+
   ;; (setq clang-format-executable "clang-format-9")
 
   ;; don't know why this is disabled by default...
@@ -664,18 +687,17 @@ before packages are loaded."
         (mc/open-notebook))))
 
 
-  (defun mc/open-todo () (interactive) (find-file "~/dev/org/todo.org"))
+  (defun mc/open-inbox () (interactive) (find-file "~/Dropbox/org/inbox.org"))
   (defun mc/open-notebook () (interactive) (find-file "~/dev/org/notebook.org"))
-  (defun mc/open-meetings () (interactive) (find-file "~/dev/org/meetings.org"))
-  (defun mc/open-appointments () (interactive) (find-file "~/dev/org/appointments.org"))
 
   (spacemacs/declare-prefix "o" "custom")
   (spacemacs/set-leader-keys
-    "ot" 'mc/open-todo
+    "oi" 'mc/open-inbox
     "oo" 'mc/toggle-notes
-    "on" 'mc/open-notebook
-    "om" 'mc/open-meetings
-    "oa" 'mc/open-appointments)
+    )
+
+  (spacemacs/set-leader-keys
+    "aa" 'org-agenda-list)
 
   (spacemacs/set-leader-keys
     "gh" 'git-gutter+-show-hunk-inline-at-point)
@@ -697,7 +719,7 @@ before packages are loaded."
 
 
   ;; better grep:
-  (setq grep-files-aliases 
+  (setq grep-files-aliases
         '(("all" . "* .[!.]* ..?*")
           ("el" . "*.el")
           ("ch" . "*.[ch]")
@@ -708,6 +730,9 @@ before packages are loaded."
           ("h" . "*.h")
           ("m" . "[Mm]akefile*")
           ("tex" . "*.tex")))
+
+  ;; don't ask when visiting files under versioncontrol
+  (setq vc-follow-symlinks t)
 
   (setq lsp-file-watch-ignored '(
                                  "[/\\\\]\\.git$"
@@ -756,3 +781,22 @@ before packages are loaded."
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(package-selected-packages
+     '(dockerfile-mode speed-type org-super-agenda reveal-in-osx-finder osx-trash osx-dictionary osx-clipboard launchctl web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode simple-httpd helm-css-scss haml-mode emmet-mode counsel-css counsel swiper ivy company-web web-completion-data add-node-modules-path apache-mode piper zenburn-theme zen-and-art-theme yasnippet-snippets yaml-mode xterm-color ws-butler writeroom-mode winum white-sand-theme which-key vterm volatile-highlights vlf vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tron-legacy-theme treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil transpose-frame toxi-theme toml-mode toc-org terminal-here tao-theme tangotango-theme tango-plus-theme tango-2-theme symon symbol-overlay sunny-day-theme sublime-themes subatomic256-theme subatomic-theme string-inflection spaceline-all-the-icons spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle shell-pop seti-theme reverse-theme restart-emacs rebecca-theme rainbow-mode rainbow-delimiters railscasts-theme racer purple-haze-theme professional-theme prism popwin planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pdf-tools pcre2el password-generator paradox overseer orgit organic-green-theme org-superstar org-projectile org-present org-pomodoro org-mime org-download org-cliplink org-brain open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme naquadah-theme nameless mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme modus-vivendi-theme modus-operandi-theme minimal-theme material-theme majapahit-theme magit-svn magit-section magit-gitflow madhat2r-theme macrostep lush-theme lsp-ui lorem-ipsum link-hint light-soap-theme kaolin-themes jbeans-theme jazz-theme ir-black-theme inkpot-theme indent-guide hybrid-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation heroku-theme hemisu-theme helm-xref helm-themes helm-swoop helm-rtags helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-lsp helm-ls-git helm-icons helm-gitignore helm-git-grep helm-flx helm-descbinds helm-ctest helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter+ gandalf-theme fuzzy font-lock+ flycheck-ycmd flycheck-rust flycheck-rtags flycheck-pos-tip flycheck-package flycheck-elsa flx-ido flatui-theme flatland-theme farmhouse-theme fancy-battery eziam-theme eyebrowse expand-region exotica-theme evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-ediff evil-cleverparens evil-args evil-anzu evil-adjust espresso-theme eshell-z eshell-prompt-extras esh-help emr elisp-slime-nav editorconfig dumb-jump dracula-theme dotenv-mode doom-themes doom-modeline django-theme disaster diminish devdocs define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dap-mode dakrone-theme cyberpunk-theme cpp-auto-include company-ycmd company-rtags company-c-headers column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized cmake-mode cmake-ide clues-theme clojure-snippets clean-aindent-mode cider-eval-sexp-fu cider chocolate-theme cherry-blossom-theme centered-cursor-mode ccls cargo busybee-theme bubbleberry-theme birds-of-paradise-plus-theme bazel-mode badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme ace-link ace-jump-helm-line ac-ispell)))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   )
+  )
