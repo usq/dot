@@ -1,4 +1,5 @@
 ;; -*- mode: emacs-lisp; lexical-binding: t -*-
+
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
 (defconst MIMAS-NAME "Mimas.local")
@@ -11,7 +12,6 @@
 
 (defconst is-osx (string-contains-p "darwin" (symbol-name system-type)))
 (defconst is-linux (string-contains-p "linux" (symbol-name system-type)))
-
 
 (defun dotspacemacs/layers ()
   "Layer configuration:
@@ -43,14 +43,14 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(html
+   '(python
+     csv
+     html
      emacs-lisp
      helm
      pdf
 
-     (shell :variables
-            shell-default-shell 'eshell)
-
+     (shell :variables shell-default-shell 'eshell)
 
      (treemacs :variables treemacs-use-follow-mode nil)
      theming
@@ -64,11 +64,10 @@ This function should only modify configuration layer settings."
      (lsp :variables
           lsp-navigation 'peek
           lsp-file-watch-threshold 3000 ; watch up to 3000 files
-          lsp-clients-clangd-executable "/usr/local/Cellar/llvm/10.0.0_3/bin/clangd"
+          lsp-clients-clangd-executable "/usr/local/Cellar/llvm/10.0.1_2/bin/clangd"
           lsp-clients-clangd-args '("--background-index" "--clang-tidy"))
 
      dap
-
      (auto-completion :variabes
                       auto-completion-enable-snippets-in-popup t
                       auto-completion-use-company-box t
@@ -89,7 +88,9 @@ This function should only modify configuration layer settings."
             c-c++-default-mode-for-headers 'c++-mode)
 
      (org :variables
-          org-capture-templates '(("t" "TODO" entry (file+headline "~/Dropbox/org/inbox.org" "Tasks") "* TODO  %?\n  %i\n")
+          org-capture-templates '(("c" "TODO" entry (file+headline "~/Dropbox/org/inbox.org" "Tasks") "* TODO  %?\n  %i\n")
+                                  ("r" "Rezept" entry (file+headline "~/Dropbox/org/recipees.org" "Inbox") "* %?\n  %i\n")
+                                  ("k" "Referenze" entry (file+headline "~/Dropbox/org/store.org" "reference") "* %?\n  %i\n")
                                   ("f" "TODO in file" entry (file+headline "~/Dropbox/org/inbox.org" "Tasks") "* TODO  %?\n  %i\n  %a"))
                                         ;org-bullets-bullet-list '("◉" "◎" "⚫" "○" "►" "◇")
           org-agenda-files '("~/Dropbox/org/_today.org"
@@ -100,6 +101,8 @@ This function should only modify configuration layer settings."
                               (sequence "LEARN" "TRY" "|" "COMPLETE(x)")
                               (sequence "TODELEGATE(-)" "DELEGATED(d)" "|" "COMPLETE(x)"))
           org-want-todo-bindings 't
+          org-hide-leading-stars t
+
           org-hide-emphasis-markers t
           org-todo-keyword-faces
           '(
@@ -113,7 +116,6 @@ This function should only modify configuration layer settings."
             ("DELEGATED" . (:foreground "gray" :weight bold ))))
 
      spacemacs-org
-     rust
      clojure
      )
 
@@ -278,10 +280,12 @@ It should only modify the values of Spacemacs settings."
    ;; (default nil)
    dotspacemacs-initial-scratch-message nil
 
+
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
+                         doom-zenburn
                          doom-snazzy
                          doom-nord
                          spacemacs-dark
@@ -323,7 +327,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; The key used for Vim Ex commands (default ":")
    dotspacemacs-ex-command-key ":"
-
+   
    ;; The leader key accessible in `emacs state' and `insert state'
    ;; (default "M-m")
    dotspacemacs-emacs-leader-key "M-m"
@@ -632,7 +636,6 @@ before packages are loaded."
   (with-eval-after-load 'magit
     (define-key magit-hunk-section-map (kbd "M-<return>") 'magit-diff-visit-file-other-window)
     (define-key magit-hunk-section-map (kbd "C-<return>") 'magit-diff-visit-file-other-window)
-
     (define-key magit-file-section-map (kbd "M-<return>") 'magit-diff-visit-file-other-window)
     (define-key magit-file-section-map (kbd "C-<return>") 'magit-diff-visit-file-other-window))
 
@@ -689,12 +692,13 @@ before packages are loaded."
 
   (defun mc/open-inbox () (interactive) (find-file "~/Dropbox/org/inbox.org"))
   (defun mc/open-notebook () (interactive) (find-file "~/dev/org/notebook.org"))
+  (defun mc/open-reference () (interactive) (find-file "~/Dropbox/org/store.org"))
 
   (spacemacs/declare-prefix "o" "custom")
   (spacemacs/set-leader-keys
     "oi" 'mc/open-inbox
     "oo" 'mc/toggle-notes
-    )
+    "or" 'mc/open-reference)
 
   (spacemacs/set-leader-keys
     "aa" 'org-agenda-list)
@@ -786,17 +790,20 @@ before packages are loaded."
 This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
-  (custom-set-variables
-   ;; custom-set-variables was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   '(package-selected-packages
-     '(dockerfile-mode speed-type org-super-agenda reveal-in-osx-finder osx-trash osx-dictionary osx-clipboard launchctl web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode simple-httpd helm-css-scss haml-mode emmet-mode counsel-css counsel swiper ivy company-web web-completion-data add-node-modules-path apache-mode piper zenburn-theme zen-and-art-theme yasnippet-snippets yaml-mode xterm-color ws-butler writeroom-mode winum white-sand-theme which-key vterm volatile-highlights vlf vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tron-legacy-theme treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil transpose-frame toxi-theme toml-mode toc-org terminal-here tao-theme tangotango-theme tango-plus-theme tango-2-theme symon symbol-overlay sunny-day-theme sublime-themes subatomic256-theme subatomic-theme string-inflection spaceline-all-the-icons spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle shell-pop seti-theme reverse-theme restart-emacs rebecca-theme rainbow-mode rainbow-delimiters railscasts-theme racer purple-haze-theme professional-theme prism popwin planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pdf-tools pcre2el password-generator paradox overseer orgit organic-green-theme org-superstar org-projectile org-present org-pomodoro org-mime org-download org-cliplink org-brain open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme naquadah-theme nameless mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme modus-vivendi-theme modus-operandi-theme minimal-theme material-theme majapahit-theme magit-svn magit-section magit-gitflow madhat2r-theme macrostep lush-theme lsp-ui lorem-ipsum link-hint light-soap-theme kaolin-themes jbeans-theme jazz-theme ir-black-theme inkpot-theme indent-guide hybrid-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation heroku-theme hemisu-theme helm-xref helm-themes helm-swoop helm-rtags helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-lsp helm-ls-git helm-icons helm-gitignore helm-git-grep helm-flx helm-descbinds helm-ctest helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter+ gandalf-theme fuzzy font-lock+ flycheck-ycmd flycheck-rust flycheck-rtags flycheck-pos-tip flycheck-package flycheck-elsa flx-ido flatui-theme flatland-theme farmhouse-theme fancy-battery eziam-theme eyebrowse expand-region exotica-theme evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-ediff evil-cleverparens evil-args evil-anzu evil-adjust espresso-theme eshell-z eshell-prompt-extras esh-help emr elisp-slime-nav editorconfig dumb-jump dracula-theme dotenv-mode doom-themes doom-modeline django-theme disaster diminish devdocs define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dap-mode dakrone-theme cyberpunk-theme cpp-auto-include company-ycmd company-rtags company-c-headers column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized cmake-mode cmake-ide clues-theme clojure-snippets clean-aindent-mode cider-eval-sexp-fu cider chocolate-theme cherry-blossom-theme centered-cursor-mode ccls cargo busybee-theme bubbleberry-theme birds-of-paradise-plus-theme bazel-mode badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme ace-link ace-jump-helm-line ac-ispell)))
-  (custom-set-faces
-   ;; custom-set-faces was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   )
-  )
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(typing yapfify stickyfunc-enhance sphinx-doc pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements lsp-python-ms lsp-pyright live-py-mode importmagic epc ctable concurrent helm-pydoc helm-gtags helm-cscope xcscope ggtags cython-mode counsel-gtags company-anaconda blacken anaconda-mode pythonic csv-mode php-mode dockerfile-mode speed-type org-super-agenda reveal-in-osx-finder osx-trash osx-dictionary osx-clipboard launchctl web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode simple-httpd helm-css-scss haml-mode emmet-mode counsel-css counsel swiper ivy company-web web-completion-data add-node-modules-path apache-mode piper zenburn-theme zen-and-art-theme yasnippet-snippets yaml-mode xterm-color ws-butler writeroom-mode winum white-sand-theme which-key vterm volatile-highlights vlf vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tron-legacy-theme treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil transpose-frame toxi-theme toml-mode toc-org terminal-here tao-theme tangotango-theme tango-plus-theme tango-2-theme symon symbol-overlay sunny-day-theme sublime-themes subatomic256-theme subatomic-theme string-inflection spaceline-all-the-icons spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle shell-pop seti-theme reverse-theme restart-emacs rebecca-theme rainbow-mode rainbow-delimiters railscasts-theme racer purple-haze-theme professional-theme prism popwin planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pdf-tools pcre2el password-generator paradox overseer orgit organic-green-theme org-superstar org-projectile org-present org-pomodoro org-mime org-download org-cliplink org-brain open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme naquadah-theme nameless mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme modus-vivendi-theme modus-operandi-theme minimal-theme material-theme majapahit-theme magit-svn magit-section magit-gitflow madhat2r-theme macrostep lush-theme lsp-ui lorem-ipsum link-hint light-soap-theme kaolin-themes jbeans-theme jazz-theme ir-black-theme inkpot-theme indent-guide hybrid-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation heroku-theme hemisu-theme helm-xref helm-themes helm-swoop helm-rtags helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-lsp helm-ls-git helm-icons helm-gitignore helm-git-grep helm-flx helm-descbinds helm-ctest helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter+ gandalf-theme fuzzy font-lock+ flycheck-ycmd flycheck-rust flycheck-rtags flycheck-pos-tip flycheck-package flycheck-elsa flx-ido flatui-theme flatland-theme farmhouse-theme fancy-battery eziam-theme eyebrowse expand-region exotica-theme evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-ediff evil-cleverparens evil-args evil-anzu evil-adjust espresso-theme eshell-z eshell-prompt-extras esh-help emr elisp-slime-nav editorconfig dumb-jump dracula-theme dotenv-mode doom-themes doom-modeline django-theme disaster diminish devdocs define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dap-mode dakrone-theme cyberpunk-theme cpp-auto-include company-ycmd company-rtags company-c-headers column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized cmake-mode cmake-ide clues-theme clojure-snippets clean-aindent-mode cider-eval-sexp-fu cider chocolate-theme cherry-blossom-theme centered-cursor-mode ccls cargo busybee-theme bubbleberry-theme birds-of-paradise-plus-theme bazel-mode badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme ace-link ace-jump-helm-line ac-ispell))
+ '(safe-local-variable-values
+   '((dap-debug-template-configurations
+      ("finance" :type "lldb" :target "/Users/michaelconrads/dev/lab/finance/build/finance")))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+)
