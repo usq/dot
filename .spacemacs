@@ -64,8 +64,7 @@ This function should only modify configuration layer settings."
      (lsp :variables
           lsp-navigation 'peek
           lsp-file-watch-threshold 3000 ; watch up to 3000 files
-          lsp-clients-clangd-executable "/usr/local/Cellar/llvm/10.0.1_2/bin/clangd"
-          lsp-clients-clangd-args '("--background-index" "--clang-tidy"))
+          )
 
      dap
      (auto-completion :variabes
@@ -81,7 +80,7 @@ This function should only modify configuration layer settings."
      cmake
      yaml
      (c-c++ :variables
-            c-c++-backend 'lsp-clangd
+            c-c++-backend 'lsp-ccls
             c-c++-enable-google-style t
             c-c++-enable-clang-format-on-save t
             c-c++-adopt-subprojects t
@@ -134,13 +133,11 @@ This function should only modify configuration layer settings."
                                       prism
                                       docker
                                       git-gutter+
-                                      bazel-mode
                                       rainbow-mode
                                       transpose-frame
                                       vlf
                                       (helm-icons :location (recipe :fetcher github :repo "yyoncho/helm-icons"))
                                       (tron-legacy-theme :location (recipe :fetcher github :repo "ianpan870102/tron-legacy-emacs-theme"))
-                                      (piper :location (recipe :fetcher gitlab :repo "howardabrams/emacs-piper"))
                                       )
 
    ;; A list of packages that cannot be updated.
@@ -289,6 +286,7 @@ It should only modify the values of Spacemacs settings."
                          doom-zenburn
                          doom-snazzy
                          doom-nord
+                         doom-acario-light
                          spacemacs-dark
                          spacemacs-light
                          doom-gruvbox
