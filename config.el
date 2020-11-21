@@ -16,79 +16,79 @@
   (browse-url (string-join (list "https://en.cppreference.com/mwiki/index.php?title=Special:Search&search=" (url-hexify-string search-term)))))
 
 ;; custom bindings for treemacs
-              (with-eval-after-load 'treemacs
-                (define-key treemacs-mode-map (kbd "o a -") 'treemacs-visit-node-ace-vertical-split)
-                (define-key treemacs-mode-map (kbd "o a /") 'treemacs-visit-node-ace-horizontal-split)
-                (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
+(with-eval-after-load 'treemacs
+  (define-key treemacs-mode-map (kbd "o a -") 'treemacs-visit-node-ace-vertical-split)
+  (define-key treemacs-mode-map (kbd "o a /") 'treemacs-visit-node-ace-horizontal-split)
+  (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
 
 
 
 
 
-              (setq doom-modeline-vcs-max-length 100
-                    doom-modeline-buffer-encoding nil)
+(setq doom-modeline-vcs-max-length 100
+      doom-modeline-buffer-encoding nil)
 
-              ;; no bell
-              (setq ring-bell-function 'ignore)
-              (with-eval-after-load 'evil
-                (defalias #'forward-evil-word #'forward-evil-symbol)
-                ;; make evil-search-word look for symbol rather than word boundaries
-                (setq-default evil-symbol-word-search t))
+;; no bell
+(setq ring-bell-function 'ignore)
+(with-eval-after-load 'evil
+  (defalias #'forward-evil-word #'forward-evil-symbol)
+  ;; make evil-search-word look for symbol rather than word boundaries
+  (setq-default evil-symbol-word-search t))
 
-              (defun mc::toggle-notes ()
-                (interactive)
-                (let* ((all-prefs (window-prev-buffers))
-                       (nextpr (car all-prefs))
-                       (_buffer-name (buffer-name nil)))
-                  (if (string-equal _buffer-name "notebook.org")
-                      (switch-to-buffer (car nextpr))
-                    (mc::open-notebook))))
-
-
-              (defun mc::open-inbox () (interactive) (find-file "~/Dropbox/org/inbox.org"))
-              (defun mc::open-notebook () (interactive) (find-file "~/dev/org/notebook.org"))
-              (defun mc::open-reference () (interactive) (find-file "~/Dropbox/org/store.org"))
-
-              (spacemacs/declare-prefix "o" "custom")
-              (spacemacs/set-leader-keys
-                "oi" 'mc::open-inbox
-                "oo" 'mc::toggle-notes
-                "or" 'mc::open-reference)
-
-              (spacemacs/set-leader-keys
-                "aa" 'org-agenda-list)
-
-              (spacemacs/set-leader-keys
-                "gh" 'git-gutter+-show-hunk-inline-at-point)
-              (spacemacs/set-leader-keys-for-major-mode 'org-mode "tu" 'org-dblock-update)
-              (spacemacs/set-leader-keys "qq" 'spacemacs/frame-killer)
+(defun mc::toggle-notes ()
+  (interactive)
+  (let* ((all-prefs (window-prev-buffers))
+         (nextpr (car all-prefs))
+         (_buffer-name (buffer-name nil)))
+    (if (string-equal _buffer-name "notebook.org")
+        (switch-to-buffer (car nextpr))
+      (mc::open-notebook))))
 
 
-              (setq helm-buffer-max-length nil)
+(defun mc::open-inbox () (interactive) (find-file "~/Dropbox/org/inbox.org"))
+(defun mc::open-notebook () (interactive) (find-file "~/dev/org/notebook.org"))
+(defun mc::open-reference () (interactive) (find-file "~/Dropbox/org/store.org"))
 
-              ;; u was set to downcase which sucks
-              (unbind-key (kbd "u") evil-visual-state-map)
-              (bind-key (kbd "u") 'undo-tree-undo evil-visual-state-map)
+(spacemacs/declare-prefix "o" "custom")
+(spacemacs/set-leader-keys
+  "oi" 'mc::open-inbox
+  "oo" 'mc::toggle-notes
+  "or" 'mc::open-reference)
 
-              (defun make-window-fringes-smaller-for-git-gutter ()
-                (if (bound-and-true-p git-gutter+-mode)
-                    (set-window-fringes nil 4 8)
-                  (set-window-fringes nil nil)))
-              (add-hook 'git-gutter+-mode-hook 'make-window-fringes-smaller-for-git-gutter)
+(spacemacs/set-leader-keys
+  "aa" 'org-agenda-list)
+
+(spacemacs/set-leader-keys
+  "gh" 'git-gutter+-show-hunk-inline-at-point)
+(spacemacs/set-leader-keys-for-major-mode 'org-mode "tu" 'org-dblock-update)
+(spacemacs/set-leader-keys "qq" 'spacemacs/frame-killer)
 
 
-              ;; better grep:
-              (setq grep-files-aliases
-                    '(("all" . "* .[!.]* ..?*")
-                      ("el" . "*.el")
-                      ("ch" . "*.[ch]")
-                      ("c" . "*.c")
-                      ("cc" . "*.cc *.cxx *.cpp *.C *.CC *.c++")
-                      ("cch" . "*.h *.cc *.cpp")
-                      ("hh" . "*.hxx *.hpp *.[Hh] *.HH *.h++")
-                      ("h" . "*.h")
-                      ("m" . "[Mm]akefile*")
-                      ("tex" . "*.tex")))
+(setq helm-buffer-max-length nil)
+
+;; u was set to downcase which sucks
+(unbind-key (kbd "u") evil-visual-state-map)
+(bind-key (kbd "u") 'undo-tree-undo evil-visual-state-map)
+
+(defun make-window-fringes-smaller-for-git-gutter ()
+  (if (bound-and-true-p git-gutter+-mode)
+      (set-window-fringes nil 4 8)
+    (set-window-fringes nil nil)))
+(add-hook 'git-gutter+-mode-hook 'make-window-fringes-smaller-for-git-gutter)
+
+
+;; better grep:
+(setq grep-files-aliases
+      '(("all" . "* .[!.]* ..?*")
+        ("el" . "*.el")
+        ("ch" . "*.[ch]")
+        ("c" . "*.c")
+        ("cc" . "*.cc *.cxx *.cpp *.C *.CC *.c++")
+        ("cch" . "*.h *.cc *.cpp")
+        ("hh" . "*.hxx *.hpp *.[Hh] *.HH *.h++")
+        ("h" . "*.h")
+        ("m" . "[Mm]akefile*")
+        ("tex" . "*.tex")))
 
 (setq vc-follow-symlinks t)
 (setq undo-tree-enable-undo-in-region t)

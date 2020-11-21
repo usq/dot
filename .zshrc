@@ -19,7 +19,12 @@ COMPLETION_WAITING_DOTS="true"
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-plugins=(git docker git-extras history jsontools npm osx tmux fasd zsh-syntax-highlighting zsh-autosuggestions)
+plugins=(git docker git-extras history jsontools vi-mode
+        # npm
+        # osx
+        # tmux fasd
+       #  zsh-syntax-highlighting zsh-autosuggestions
+        )
 # vi-mode vi-mode-agnoster
 #
 
@@ -32,49 +37,20 @@ export PATH="/usr/local/sbin:$PATH:${HOME}/bin:${HOME}/.cargo/bin:${HOME}/.emacs
 export ALTERNATE_EDITOR="vim"
 
 
-
 fpath+=("$HOME/.zsh/pure")
+autoload -U promptinit; promptinit
+prompt pure
 
 
 [ -f ~/.config/usq/functions/fn.sh ] && source ~/.config/usq/functions/fn.sh
 [ -f ~/.config/usq/alias/al.sh ] && source ~/.config/usq/alias/al.sh
 [ -f ~/.config/usq/msc/msc.sh ] && source ~/.config/usq/msc/msc.sh
 
-export WERKSTATT="${HOME}/dev/werkstatt"
-[ -d ~/dev/werkstatt ] && source "${HOME}/dev/werkstatt/.werkstattrc.bash"
-
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-unalias d 2>/dev/null
-alias drb='dr -it /bin/bash'
-alias dit='dotfiles'
-compdef dit='git'
-setopt complete_aliases
-
-alias r='drb'
-alias bq='bz query'
-alias gbdd='git branch -D'
-alias gbv='git branch -v'
-alias gs='git status'
-alias cat=bat
-
-test_ddsv2() {
-#    "${HOME}/dev/tools/test_dds_v2.sh"
-
-    bt //platform/fusion/plugins/dds_v2/test:unit_tests
-    bt //platform/fusion/test/integration/multi_instance:test
-
-    bt -c dbg //platform/fusion/plugins/dds_v2/test:unit_tests
-    bt -c dbg //platform/fusion/test/integration/multi_instance:test
-}
 
 # Will return non-zero status if the current directory is not managed by git
 is_in_git_repo() {
     git rev-parse HEAD > /dev/null 2>&1
-}
-
-ec() {
-  emacsclient "$@"
 }
 
 gt() {
@@ -91,59 +67,13 @@ join-lines() {
     done
 }
 
-test_ddsv2() {
-    "${HOME}/dev/tools/test_ddsv2.sh"
-}
-
-# run_until() {
-#    source "${HOME}/dev/werkstatt/.werkstattrc.bash"
-#    while $@ ; do :; done
-# }
-
-
-unalias ws 2>/dev/null
-ws() {
-    WERKSTATT=/home/conradmi/dev/werkstatt
-    cd $WERKSTATT
-}
-
-ws2() {
-    WERKSTATT=/home/conradmi/dev/werkstatt2
-    cd $WERKSTATT
-}
-
-ws3() {
-    WERKSTATT=/home/conradmi/dev/werkstatt3
-    cd $WERKSTATT
-}
-
 CAPS_LOCK() {
     xdotool key Caps_Lock
 }
 
-unalias bz 2>/dev/null
-bz() {
-  `git rev-parse --show-toplevel 2>/dev/null`/tools/docker/bazel.py $@
-}
-unalias bt 2>/dev/null
-bt() {
-  bz test --cache_test_results=no $@
-}
 
 psg() {
   ps aux | grep "$@"
-}
-
-run_until() {
-  for i in {0..$1}; do
-    echo "run $i"
-    echo "running: ${@:2}"
-
-    "${@:2}"
-    if [ $? -ne 0 ]; then
-      break;
-    fi
-  done;
 }
 
 git-remote-branches() {
@@ -165,3 +95,5 @@ alias -s md=ec
 #hash -d W=~/dev/werkstatt
 
 export spawn=~/dev/lab/spawn
+
+bindkey -v
