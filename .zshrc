@@ -34,19 +34,16 @@ source $ZSH/oh-my-zsh.sh
 
 #Warning: Homebrew's sbin was not found in your PATH but you have installed
 #formulae that put executables in /usr/local/sbin.
-# ls /usr/local/sbin: 
+# ls /usr/local/sbin:
 # comsatd iftop imap4d lmtpd mda nethogs pop3d unbound unbound-anchor unbound-checkconf 
 # unbound-control unbound-control-setup unbound-host
 export PATH="/usr/local/sbin:$PATH"
 
-fpath+=("$HOME/.zsh/pure")
-autoload -U promptinit; promptinit
-prompt pure
-
 
 [ -f ~/.config/usq/functions/fn.sh ] && source ~/.config/usq/functions/fn.sh
 [ -f ~/.config/usq/alias/al.sh ] && source ~/.config/usq/alias/al.sh
-[ -f ~/.config/usq/msc/msc.sh ] && source ~/.config/usq/msc/msc.sh
+
+[ -f ~/.config/usq/msc/msc.sh ] && source ~/.config/usq/msc/msc.sh # initializes pure prompt
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 

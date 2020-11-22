@@ -1,5 +1,4 @@
 #+STARTUP: overview
-
 * mac config
 #+begin_src emacs-lisp
   (when (string= system-type "darwin")
@@ -26,6 +25,9 @@
   
 * other  
   #+begin_src emacs-lisp
+
+    (defun sp--while-no-input (&rest args))
+
     ;; custom bindings for treemacs
     (with-eval-after-load 'treemacs
       (define-key treemacs-mode-map (kbd "o a -") 'treemacs-visit-node-ace-vertical-split)
