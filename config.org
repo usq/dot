@@ -6,17 +6,6 @@
     (setq dired-use-ls-dired nil))
 #+end_src
 * custom
-** piper
-   #+begin_src emacs-lisp
-(use-package piper
-  :config
-  (spacemacs/declare-prefix "o |" "piper")
-  (spacemacs/set-leader-keys
-    "|"     '("piper-ui"        . piper-user-interface)
-    "o | |" '("piper-locally"   . piper)
-    "o | d" '("other-directory" . piper-other)
-    "o | r" '("piper-remotely"  . piper-remote)))
-   #+end_src
 ** custom functions  
    #+begin_src emacs-lisp
 (defun mc::search-cpp-ref (search-term)
@@ -24,6 +13,17 @@
   (require 'url-util)
   (browse-url (string-join (list "https://en.cppreference.com/mwiki/index.php?title=Special:Search&search=" (url-hexify-string search-term)))))
    #+end_src
+* pdf tools
+  there should be a better way for this
+  #+begin_src emacs-lisp
+    ; (use-package pdf-tools
+    ;   :ensure t
+    ;   :config
+    ;   (custom-set-variables
+    ;    '(pdf-tools-handle-upgrades nil)) ; Use brew upgrade pdf-tools instead.
+    ;   (setq pdf-info-epdfinfo-program "/usr/local/bin/epdfinfo"))
+  #+end_srcˍ
+  
 * other  
   #+begin_src emacs-lisp
     ;; custom bindings for treemacs
@@ -31,10 +31,6 @@
       (define-key treemacs-mode-map (kbd "o a -") 'treemacs-visit-node-ace-vertical-split)
       (define-key treemacs-mode-map (kbd "o a /") 'treemacs-visit-node-ace-horizontal-split)
       (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
-
-
-
-
 
     (setq doom-modeline-vcs-max-length 100
           doom-modeline-buffer-encoding nil)
