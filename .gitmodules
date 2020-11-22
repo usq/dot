@@ -1,0 +1,3 @@
+[submodule "org_brain"]
+	path = org_brain
+	url = git@github.com:usq/org_brain.git
