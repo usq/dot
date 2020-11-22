@@ -6,7 +6,7 @@
 
 (defun is-installed (str)
   (eq 0
-      (car (process-exit-code-and-output "bash" "-c" "command" "-v" str))))
+      (car (process-exit-code-and-output "bash" "-c" (concat "command -v " str)))))
 
 (defun print-shell-command (&rest args)
   (let ((res (apply 'process-exit-code-and-output args)))
@@ -39,6 +39,16 @@
 (defun sudo-shell-command (command)
   (shell-command-to-string (concat "echo " (read-passwd "Password: ") " | sudo -S " command)))
 
+(defun string-join (strings delim)
+  (mapconcat 'identity strings delim))
+
+(defun print-section (str)
+  (let ((to-add-left (/ (- 80 (length str)) 2.0))
+        (to-add-right))
+
+    (setq to-add-right (if (integerp to-add-left) to-add-left (ceiling to-add-left)))
+    (message (concat (make-string (floor to-add-left) ?-) (concat " " str " ") (make-string to-add-right ?-)))))
+
 
 (let ((emacs-in-config-dir (expand-file-name "~/.config/.emacs.d"))
       (emacs-dir (expand-file-name "~/.emacs.d")))
@@ -46,16 +56,45 @@
    ((file-directory-p emacs-dir)           (clone-in-folder-if-necessary emacs-dir))
    ((file-directory-p emacs-in-config-dir) (clone-in-folder-if-necessary emacs-in-config-dir))))
 
+(print-section "checking apt progs")
 
-(message "----------------------")
-(if (is-installed "vim")
-    (message "vim is installed")
-    (progn
-	(message "getting basic vim")
-	(message "%s" (sudo-shell-command "apt install vim -y"))))
+(let ((to-check '("vim" "fzf"))
+      (to-install '())
+      (cmd))
 
-(message "----------------------")
-(message "Checking symlinks...")
+  (dolist (p to-check)
+    (if (is-installed p)
+        (message "%s is installed" p)
+      (progn
+	      (message "installing %s" p)
+        (push p to-install))))
+
+  (when to-install
+    (setq cmd (concat "apt install " (string-join to-install " ") " -y"))
+    (message "running %s" cmd)
+    (message "%s" (sudo-shell-command cmd))))
+
+(print-section "checking snap progs")
+(let ((to-check '(("discord" . "")
+                  ("spotify" . "")))
+      (to-install nil))
+
+  (dolist (p to-check)
+    (let ((name (car p)))
+      (if (is-installed name)
+          (message "%s is installed" name)
+        (progn
+          (push p to-install)))))
+
+  (dolist(app to-install)
+    (message "Installing %s" (car app))
+    (message "%s" (sudo-shell-command
+                   (concat "snap install "
+                           (car app)
+                           " "
+                           (cdr app))))))
+
+(print-section "Checking symlinks")
 
 (defvar-local working-dir (file-name-directory load-file-name))
 (defvar-local symlinks-to-check '((".spacemacs" . "~/.spacemacs")
@@ -65,17 +104,15 @@
 (mapcar (lambda (el)
           (let ((file-here (car el))
                 (symlink-location (cdr el)))
-            (message "checking %s" symlink-location)
+            (princ (format "checking %s..." symlink-location))
             (if (file-symlink-p symlink-location)
-                (message "symlink ok")
+                (princ "symlink ok\n")
               (progn
-                (message "create %s symlink" symlink-location)
+                (print (format "create %s symlink" symlink-location))
                 (make-symbolic-link (concat working-dir file-here) symlink-location)))))
         symlinks-to-check)
 
-(message "----------------------")
-
-(message "---------- ZSH setup ------------")
+(print-section "ZSH setup")
 (if (mc:git-dir-p "~/.oh-my-zsh")
   (let ;; .oh-my-zsh here, check if we have to install plugins
       ((zsh-autosug-dir (expand-file-name "~/.oh-my-zsh/custom/plugins/zsh-autosuggestions"))
@@ -92,19 +129,23 @@
   (message "please go to 'https://github.com/ohmyzsh/ohmyzsh' and run oh my zsh install from there"))
 
 ;; git setup
-(message "git config")
-(print-shell-command "git" "config" "--global" "pull.rebase" "true")
-(print-shell-command "git" "config" "--global" "user.name" "Michael Conrads")
-(print-shell-command "git" "config" "--global" "user.email" "michaelconrads@me.com")
-(print-shell-command "git" "config" "--global" "alias.st" "status")
-(print-shell-command "git" "config" "--global" "alias.cm" "commit")
-(print-shell-command "git" "config" "--global" "alias.br" "branch")
+(print-section "git config")
+(with-temp-buffer
+  (let ((b (current-buffer)))
+    (shell-command "git config --global pull.rebase true" b)
+    (shell-command "git config --global user.name Michael Conrads" b)
+    (shell-command "git config --global user.email michaelconrads@me.com" b)
+    (shell-command "git config --global alias.st status" b)
+    (shell-command "git config --global alias.cm commit" b)
+    (shell-command "git config --global alias.br branch" b)))
+(message "done")
 
 
 ;; TODO:
 ;; + org-brain setup
 ;; + keyboard speed
-;; + init
+;; + init ?
+
 
 
 
