@@ -58,7 +58,7 @@
 
 (print-section "checking apt progs")
 
-(let ((to-check '("vim" "fzf"))
+(let ((to-check '("vim" "fzf" "htop"))
       (to-install '())
       (cmd))
 
