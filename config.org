@@ -214,6 +214,7 @@
 * Keybindings
   #+begin_src emacs-lisp
     (spacemacs/set-leader-keys "o c" 'mc::search-cpp-ref)
+    (spacemacs/set-leader-keys "o B" 'org-brain-visualize)
   #+end_src
 
   

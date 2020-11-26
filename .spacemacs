@@ -102,6 +102,7 @@ This function should only modify configuration layer settings."
           org-want-todo-bindings 't
           org-hide-leading-stars t
           org-pretty-entities t
+          org-brain-path "~/dot/org_brain/"
 
           org-hide-emphasis-markers t
           org-todo-keyword-faces
