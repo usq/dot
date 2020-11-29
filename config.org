@@ -195,7 +195,6 @@
     (defun mc::open-inbox () (interactive) (find-file "~/Dropbox/org/inbox.org"))
     (defun mc::open-notebook () (interactive) (find-file "~/dev/org/notebook.org"))
     (defun mc::open-recipees () (interactive) (find-file "~/Dropbox/org/recipees.org"))
-
   #+end_src
   
 * Keybindings
@@ -203,7 +202,7 @@
     (spacemacs/declare-prefix "o" "custom")
     (spacemacs/set-leader-keys
       "oi" 'mc::open-inbox
-      "oo" 'mc::toggle-notes
+      "oo" 'mc::open-inbox
       "or" 'mc::open-recipees
       "oc" 'mc::search-cpp-ref
       "oB" 'org-brain-visualize
