@@ -1,18 +1,9 @@
 #+STARTUP: overview
-
 * mac config
 #+begin_src emacs-lisp
   (when (string= system-type "darwin")
     (setq dired-use-ls-dired nil))
 #+end_src
-* custom
-** custom functions  
-   #+begin_src emacs-lisp
-(defun mc::search-cpp-ref (search-term)
-  (interactive "sSearch Term: ")
-  (require 'url-util)
-  (browse-url (string-join (list "https://en.cppreference.com/mwiki/index.php?title=Special:Search&search=" (url-hexify-string search-term)))))
-   #+end_src
 * pdf tools
   there should be a better way for this
   #+begin_src emacs-lisp
@@ -24,66 +15,49 @@
     ;   (setq pdf-info-epdfinfo-program "/usr/local/bin/epdfinfo"))
   #+end_srcˍ
   
+  
 * other  
   #+begin_src emacs-lisp
-        (defun sp--while-no-input (&rest args))
+    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 
-        ;; custom bindings for treemacs
-        (with-eval-after-load 'treemacs
-          (define-key treemacs-mode-map (kbd "o a -") 'treemacs-visit-node-ace-vertical-split)
-          (define-key treemacs-mode-map (kbd "o a /") 'treemacs-visit-node-ace-horizontal-split)
-          (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
+    ;; custom bindings for treemacs
+    (with-eval-after-load 'treemacs
+      (define-key treemacs-mode-map (kbd "o a -") 'treemacs-visit-node-ace-vertical-split)
+      (define-key treemacs-mode-map (kbd "o a /") 'treemacs-visit-node-ace-horizontal-split)
+      (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
 
-        (setq doom-modeline-vcs-max-length 100
-              doom-modeline-buffer-encoding nil)
+    ;; no bell
+    (with-eval-after-load 'evil
+      (defalias #'forward-evil-word #'forward-evil-symbol)
+      ;; make evil-search-word look for symbol rather than word boundaries
+      (setq-default evil-symbol-word-search t))
 
-        ;; no bell
-        (setq ring-bell-function 'ignore)
-        (with-eval-after-load 'evil
-          (defalias #'forward-evil-word #'forward-evil-symbol)
-          ;; make evil-search-word look for symbol rather than word boundaries
-          (setq-default evil-symbol-word-search t))
+    ;; better grep:
+    (setq grep-files-aliases
+          '(("all" . "* .[!.]* ..?*")
+            ("el" . "*.el")
+            ("ch" . "*.[ch]")
+            ("c" . "*.c")
+            ("cc" . "*.cc *.cxx *.cpp *.C *.CC *.c++")
+            ("cch" . "*.h *.cc *.cpp")
+            ("hh" . "*.hxx *.hpp *.[Hh] *.HH *.h++")
+            ("h" . "*.h")
+            ("m" . "[Mm]akefile*")
+            ("tex" . "*.tex")))
 
-        (defun mc::toggle-notes ()
-          (interactive)
-          (let* ((all-prefs (window-prev-buffers))
-                 (nextpr (car all-prefs))
-                 (_buffer-name (buffer-name nil)))
-            (if (string-equal _buffer-name "notebook.org")
-                (switch-to-buffer (car nextpr))
-              (mc::open-notebook))))
+    (helm-icons-enable)
 
-        (setq helm-buffer-max-length nil)
-
-        ;; u was set to downcase which sucks
-        (unbind-key (kbd "u") evil-visual-state-map)
-        (bind-key (kbd "u") 'undo-tree-undo evil-visual-state-map)
-
-        (defun make-window-fringes-smaller-for-git-gutter ()
-          (if (bound-and-true-p git-gutter+-mode)
-              (set-window-fringes nil 4 8)
-            (set-window-fringes nil nil)))
-        (add-hook 'git-gutter+-mode-hook 'make-window-fringes-smaller-for-git-gutter)
-
-
-        ;; better grep:
-        (setq grep-files-aliases
-              '(("all" . "* .[!.]* ..?*")
-                ("el" . "*.el")
-                ("ch" . "*.[ch]")
-                ("c" . "*.c")
-                ("cc" . "*.cc *.cxx *.cpp *.C *.CC *.c++")
-                ("cch" . "*.h *.cc *.cpp")
-                ("hh" . "*.hxx *.hpp *.[Hh] *.HH *.h++")
-                ("h" . "*.h")
-                ("m" . "[Mm]akefile*")
-                ("tex" . "*.tex")))
-
-        (setq vc-follow-symlinks t)
-        (setq undo-tree-enable-undo-in-region t)
-        (helm-icons-enable)
-        (setq projectile-enable-caching t
-              c-basic-offset 4)
+    (setq
+     org-confirm-babel-evaluate nil
+     evil-want-fine-undo t
+     doom-modeline-vcs-max-length 100
+     doom-modeline-buffer-encoding nil
+     ring-bell-function 'ignore
+     helm-buffer-max-length nil
+     undo-tree-enable-undo-in-region t
+     vc-follow-symlinks t
+     projectile-enable-caching t
+     c-basic-offset 4)
   #+end_src
 * Compile
   #+begin_src emacs-lisp
@@ -112,20 +86,16 @@
   #+end_src
 * tramp config  
   #+begin_src emacs-lisp
-                  (setq read-process-output-max (* 1024 1024)) ;; 1mb
-                  (setq tramp-default-method "ssh")
-                  (setq tramp-verbose 3)
-                  (setq tramp-shell-prompt-pattern "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")
+    (setq read-process-output-max (* 1024 1024) ;; 1mb
+          tramp-default-method ssh
+          tramp-verbose 3
+          tramp-shell-prompt-pattern "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")
   #+end_src
 * dired
   #+begin_src emacs-lisp
     (setq dired-listing-switches "-alh --group-directories-first")
   #+end_src
 * org   
-** Do not ask before evaluating code block 
-   #+begin_src emacs-lisp
-     (setq org-confirm-babel-evaluate nil)
-   #+end_src
 ** org tempo to get <s tp work
    #+begin_src emacs-lisp
      (use-package org-tempo :after org)
@@ -190,13 +160,10 @@
           writeroom-width 160
           )
   #+end_src
-* Fid file functions  
+* Own functions 
   #+begin_src emacs-lisp
-    (defun mc::open-inbox () (interactive) (find-file "~/Dropbox/org/inbox.org"))
-    (defun mc::open-notebook () (interactive) (find-file "~/dev/org/notebook.org"))
-    (defun mc::open-recipees () (interactive) (find-file "~/Dropbox/org/recipees.org"))
-  #+end_src
-  
+    (require 'own-functions)
+  #+end_src 
 * Keybindings
   #+begin_src emacs-lisp
     (spacemacs/declare-prefix "o" "custom")
@@ -205,16 +172,13 @@
       "oo" 'mc::open-inbox
       "or" 'mc::open-recipees
       "oc" 'mc::search-cpp-ref
-      "oB" 'org-brain-visualize
-      )
+      "oB" 'org-brain-visualize)
 
     (spacemacs/set-leader-keys
       "aa" 'org-agenda-list
-      "gh" 'git-gutter+-show-hunk-inline-at-point
-      "qq" 'spacemacs/frame-killer
-      )
+      "gh" 'git-gutter+-show-hunk-inline-at-point)
     (spacemacs/set-leader-keys-for-major-mode 'org-mode "tu" 'org-dblock-update)
-
   #+end_src
 
+  
   
