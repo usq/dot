@@ -105,6 +105,7 @@ This function should only modify configuration layer settings."
                               (sequence "STARTED(s)" "TODO(t)" "WAITING(w@/!)" "SOMEDAY(.)" "|" "DONE(x!)" "CANCELLED(c)")
                               (sequence "LEARN" "TRY" "|" "COMPLETE(x)")
                               (sequence "TODELEGATE(-)" "DELEGATED(d)" "|" "COMPLETE(x)"))
+          org-brain-path "~/dot/org_brain/"
           org-want-todo-bindings 't
           org-hide-leading-stars 't
           org-pretty-entities t
