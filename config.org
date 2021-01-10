@@ -1,7 +1,8 @@
 #+STARTUP: overview
 * mac config
+** On macos gnu ls is not working
 #+begin_src emacs-lisp
-  (when (string= system-type "darwin")
+  (when is-mimas
     (setq dired-use-ls-dired nil))
 #+end_src
 * pdf tools
@@ -167,6 +168,12 @@
      (expand-file-name "~/dot/"))
     (require 'own-functions)
   #+end_src 
+* visual
+** On Linux, we want transparency
+   #+begin_src emacs-lisp
+     (when is-jupiter
+       (spacemacs/enable-transparency))
+   #+end_src
 * Keybindings
   #+begin_src emacs-lisp
     (spacemacs/declare-prefix "o" "custom")
