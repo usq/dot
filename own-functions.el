@@ -19,3 +19,7 @@
     (if (string-equal _buffer-name "notebook.org")
         (switch-to-buffer (car nextpr))
       (mc::open-notebook))))
+
+
+(provide 'own-functions)
+

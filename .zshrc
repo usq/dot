@@ -51,3 +51,5 @@ export PATH="/usr/local/sbin:$PATH"
 psg() {
   ps aux | grep "$@"
 }
+
+source /Users/michaelconrads/.config/broot/launcher/bash/br
