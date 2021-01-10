@@ -52,4 +52,4 @@ psg() {
   ps aux | grep "$@"
 }
 
-source /Users/michaelconrads/.config/broot/launcher/bash/br
+[ -f ~/.config/broot/launcher/bash/br ] && source ~/.config/broot/launcher/bash/br
