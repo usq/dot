@@ -35,21 +35,32 @@ source $ZSH/oh-my-zsh.sh
 #Warning: Homebrew's sbin was not found in your PATH but you have installed
 #formulae that put executables in /usr/local/sbin.
 # ls /usr/local/sbin:
-# comsatd iftop imap4d lmtpd mda nethogs pop3d unbound unbound-anchor unbound-checkconf 
+# comsatd iftop imap4d lmtpd mda nethogs pop3d unbound unbound-anchor unbound-checkconf
 # unbound-control unbound-control-setup unbound-host
 export PATH="/usr/local/sbin:$PATH"
 
+# Checks if a passed file exists and sources it
+#
+# Args: $1: file to source if it exists
+function __source_if_found()
+{
+    [ -f "${1}" ] && source "${1}"
+}
 
-[ -f ~/.config/usq/functions/fn.sh ] && source ~/.config/usq/functions/fn.sh
-[ -f ~/.config/usq/alias/al.sh ] && source ~/.config/usq/alias/al.sh
+files=(
+    ~/.config/usq/alias/al.sh
+    ~/.config/usq/functions/fn.sh
+    ~/.config/usq/msc/msc.sh # initializes pure prompt
+    ~/.fzf.zsh
+    /usr/share/doc/fzf/examples/key-bindings.zsh
+    /usr/share/doc/fzf/examples/completion.zsh
+    ~/.config/broot/launcher/bash/br
+)
 
-[ -f ~/.config/usq/msc/msc.sh ] && source ~/.config/usq/msc/msc.sh # initializes pure prompt
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
+for f in ${files[@]}; do
+    __source_if_found "${f}"
+done
 
 psg() {
   ps aux | grep "$@"
 }
-
-[ -f ~/.config/broot/launcher/bash/br ] && source ~/.config/broot/launcher/bash/br
