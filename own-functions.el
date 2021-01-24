@@ -1,8 +1,6 @@
 
 
-(defun mc::open-inbox () (interactive) (find-file "~/Dropbox/org/inbox.org"))
-(defun mc::open-notebook () (interactive) (find-file "~/dev/org/notebook.org"))
-(defun mc::open-recipees () (interactive) (find-file "~/Dropbox/org/recipees.org"))
+
 
 
 (defun mc::search-cpp-ref (search-term)

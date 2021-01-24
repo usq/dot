@@ -172,15 +172,23 @@
   #+end_src
 * Own functions 
   #+begin_src emacs-lisp
-    (add-to-load-path
-     (expand-file-name "~/dot/"))
-    (require 'own-functions)
+      (add-to-load-path
+       (expand-file-name "~/dot/"))
+      (require 'own-functions)
+
+    (defvar mc-org-files-location (if is-jupiter
+                                      "~/dropbox-sync/"
+                                    "~/Dropbox/org/"))
+
+    (defun mc::open-inbox () (interactive) (find-file (concat mc-org-files-location "inbox.org")))
+    (defun mc::open-notebook () (interactive) (find-file (concat mc-org-files-location "notebook.org")))
+    (defun mc::open-recipees () (interactive) (find-file (concat mc-org-files-location "recipees.org")))
   #+end_src 
 * visual
-** On Linux, we want transparency
+** On Linux, we want transparency (sometimes)
    #+begin_src emacs-lisp
-     (when is-jupiter
-       (spacemacs/enable-transparency))
+     ;; (when is-jupiter
+     ;;   (spacemacs/enable-transparency))
    #+end_src
 * Keybindings
   #+begin_src emacs-lisp
