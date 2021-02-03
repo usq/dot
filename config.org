@@ -45,7 +45,7 @@
             ("m" . "[Mm]akefile*")
             ("tex" . "*.tex")))
 
-    (helm-icons-enable)
+    ;; (helm-icons-enable)
 
     (setq
      org-confirm-babel-evaluate nil
