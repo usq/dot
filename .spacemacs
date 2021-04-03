@@ -74,6 +74,7 @@ This function should only modify configuration layer settings."
      (lsp :variables
           lsp-navigation 'peek
           lsp-file-watch-threshold 3000 ; watch up to 3000 files
+          lsp-clients-clangd-executable "clangd-11"
           )
 
      dap
@@ -90,7 +91,7 @@ This function should only modify configuration layer settings."
      cmake
      yaml
      (c-c++ :variables
-            c-c++-backend 'lsp-ccls
+            c-c++-backend 'lsp-clangd
             c-c++-enable-google-style t
             c-c++-enable-clang-format-on-save t
             c-c++-adopt-subprojects t
@@ -295,14 +296,17 @@ It should only modify the values of Spacemacs settings."
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
-                         doom-gruvbox-light
-                         doom-spacegrey
+                         doom-palenight
+                         spacemacs-light
+                         spacemacs-dark
                          doom-solarized-light
+                         doom-spacegrey
+                         doom-gruvbox-light
+                         doom-monokai-pro
                          doom-sourcerer
                          kaolin-valley-dark
                          doom-solarized-dark
 
-                         spacemacs-light
                          doom-snazzy
                          doom-nord
                          doom-gruvbox
