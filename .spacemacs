@@ -98,6 +98,7 @@ This function should only modify configuration layer settings."
             c-c++-default-mode-for-headers 'c++-mode)
 
      (org :variables
+          org-enable-appear-support t
           org-capture-templates '(("c" "TODO" entry (file+headline "~/Dropbox/org/inbox.org" "Tasks") "* TODO  %?\n  %i\n")
                                   ("r" "Rezept" entry (file+headline "~/Dropbox/org/recipees.org" "Inbox") "* %?\n  %i\n")
                                   ("k" "Referenze" entry (file+headline "~/Dropbox/org/store.org" "reference") "* %?\n  %i\n")
@@ -329,12 +330,16 @@ It should only modify the values of Spacemacs settings."
 
    ;; Default font or prioritized list of fonts.
    dotspacemacs-default-font '(
-                               "Fantasque Sans Mono"
+                               "JetBrains Mono"
+                               :weight light
                                :size 13.0
-                               ;; "Source Code Pro"
-                               ;; :size 10.0
-                               :weight normal
-                               :width normal)
+                               ;; "Fantasque Sans Mono"
+                               ;; :size 13.0
+                               ;; ;; "Source Code Pro"
+                               ;; ;; :size 10.0
+                               ;; :weight normal
+                               ;; :width normal
+                               )
 
    ;; The leader key (default "SPC")
    dotspacemacs-leader-key "SPC"
@@ -586,15 +591,27 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
-  ;; (setq-default
-  ;;  theming-modifications
-  ;;  '((doom-solarized-light
-  ;;     (mode-line :height 1)
-  ;;     (mode-line-inactive :height 1))
-  ;;    (doom-gruvbox-light
-  ;;     (mode-line :height 1)
-  ;;     (mode-line-inactive :height 1))))
+
+  (set-face-attribute 'fixed-pitch nil
+                      :font "JetBrains Mono"
+                      :height 130
+                      :weight 'light)
+
+  ;; Set the variable pitch face
+  (set-face-attribute 'variable-pitch nil
+                      ;; :font "Cantarell"
+                      :font "Iosevka Aile"
+                      :height 130
+                      :weight 'normal)
+
+  ;; Make sure org-indent face is available
+  (require 'org-indent)
+  (defun mc/org-mode-setup ()
+    (org-indent-mode)
+    (variable-pitch-mode 1))
+  (add-hook 'org-mode-hook 'mc/org-mode-setup)
   )
+
 
 (defun dotspacemacs/user-load ()
   "Library to load while dumping.
