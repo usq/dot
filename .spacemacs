@@ -53,8 +53,7 @@ This function should only modify configuration layer settings."
       html-enable-lsp t)
      emacs-lisp
      (elfeed :variables
-             elfeed-feeds '(("https://isocpp.org/blog/rss"))
- )
+             elfeed-feeds '(("https://isocpp.org/blog/rss")))
 
      helm
      pdf

@@ -48,6 +48,7 @@
     ;; (helm-icons-enable)
 
     (setq
+     comp-async-report-warnings-errors nil
      org-confirm-babel-evaluate nil
      evil-want-fine-undo t
      doom-modeline-vcs-max-length 100
@@ -98,13 +99,14 @@
     (use-package dired
       :ensure nil
       :custom
-      ((dired-listing-switches "-agho --group-directories-first"))
+      (dired-listing-switches "-agho --group-directories-first")
       :config
       (evil-define-key 'normal dired-mode-map (kbd "h") 'dired-up-directory)
       (evil-define-key 'normal dired-mode-map (kbd "l") 'dired-find-file)
       (evil-define-key 'normal dired-mode-map (kbd "o") 'dired-find-file-other-window)
       (evil-define-key 'normal dired-mode-map (kbd "i") 'dired-insert-subdir)
 
+      ;;(setq dired-actual-switches "-agho --group-directories-first")
       ;; look at http://pragmaticemacs.com/category/dired/
       )
   #+end_src
@@ -113,6 +115,43 @@
    #+begin_src emacs-lisp
      (use-package org-tempo :after org)
    #+end_src
+                                                                            
+** pitch mode hook                                                                                            
+    This is from the system crafters github page:                                                              
+    https://github.com/daviwil/dotfiles/blob/master/Emacs.org                                                  
+                                                                                                               
+       #+begin_src emacs-lisp                                                                                  
+         (use-package org-appear                                                                               
+           :defer t)                                                                                           
+         (set-face-attribute 'org-document-title nil :font "Iosevka Aile" :weight 'bold :height 1.3)           
+                                                                                                               
+         (dolist (face '((org-level-1 . 1.2)                                                                   
+                         (org-level-2 . 1.1)                                                                   
+                         (org-level-3 . 1.05)                                                                  
+                         (org-level-4 . 1.0)                                                                   
+                         (org-level-5 . 1.1)                                                                   
+                         (org-level-6 . 1.1)                                                                   
+                         (org-level-7 . 1.1)                                                                   
+                         (org-level-8 . 1.1)))                                                                 
+           (set-face-attribute (car face) nil :font "Iosevka Aile" :weight 'medium :height (cdr face)))        
+                                                                                                               
+         ;; Ensure that anything that should be fixed-pitch in Org files appears that way                      
+         (defun mc/setup-org-mode ()                                                                           
+           (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)                           
+           (set-face-attribute 'org-table nil  :inherit 'fixed-pitch)                                          
+           (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)                                        
+           (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))                                 
+           (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))                               
+           (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))                               
+           (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))        
+           (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))              
+           (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)                                        
+                                                                                                               
+           (org-appear-mode))                                                                                  
+                                                                                                               
+         (add-hook 'org-mode-hook 'mc/setup-org-mode)                                                          
+       #+end_src                                                                          
+                
 * Overlay mode
 ** Add 2 more overlay colors
    #+begin_src emacs-lisp
